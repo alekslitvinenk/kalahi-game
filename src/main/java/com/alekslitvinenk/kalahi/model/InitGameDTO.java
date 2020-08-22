@@ -1,4 +1,4 @@
-package com.alekslitvinenk.kalahi.dto;
+package com.alekslitvinenk.kalahi.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class InitGameDTO {
-    private String gameSession;
+    private String gameToken;
     private PlayerRole playerRole;
+    private GameState gameState;
 }

@@ -1,4 +1,4 @@
-package com.alekslitvinenk.kalahi.dto;
+package com.alekslitvinenk.kalahi.model;
 
 public enum PlayerRole {
     PlayerA,
