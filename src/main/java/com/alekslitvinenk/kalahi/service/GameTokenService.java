@@ -1,10 +1,10 @@
 package com.alekslitvinenk.kalahi.service;
 
+import com.alekslitvinenk.kalahi.model.GameTokenParams;
 import com.alekslitvinenk.kalahi.model.PlayerRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.core.token.Token;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -15,7 +15,6 @@ public class GameTokenService {
 
     @Value("${serverSecret}")
     private String serverSecret;
-
     @Value("${serverInteger}")
     private Integer serverInteger;
 
@@ -33,5 +32,10 @@ public class GameTokenService {
         String extendedInfo = gameId + ";" + playerRole.name();
         Token gameToken = tokenService.allocateToken(extendedInfo);
         return gameToken.getKey();
+    }
+
+    public GameTokenParams getGameParamsFromToken(String token) {
+        Token gameToken = tokenService.verifyToken(token);
+        return GameTokenParams.fromTokenExtendedInfo(gameToken.getExtendedInformation());
     }
 }

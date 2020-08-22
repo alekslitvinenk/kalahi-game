@@ -19,11 +19,6 @@ public class GameController {
     @Autowired
     private GameTokenService gameTokenService;
 
-    @GetMapping("hello")
-    public String helloWorld() {
-        return "Hello World";
-    }
-
     @GetMapping("init")
     public InitGameDTO initPlayer() {
         GameState gameState = gameStateService.getNotConcludedOrCreateNewGame();

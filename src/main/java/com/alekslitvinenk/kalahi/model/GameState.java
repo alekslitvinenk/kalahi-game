@@ -9,6 +9,7 @@ public class GameState {
     private int gameId;
     private PlayerState playerA;
     private PlayerState playerB;
+    private PlayerRole nextTurn = PlayerRole.PlayerA;
 
     public GameState(int gameId) {
         this.gameId = gameId;
