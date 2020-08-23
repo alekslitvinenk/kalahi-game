@@ -20,23 +20,18 @@ public class GameController {
     private GameTokenService gameTokenService;
 
     @GetMapping("init")
-    public InitGameDTO initPlayer() {
+    public InitGameResponse initPlayer() {
         GameState gameState = gameStateService.getNotConcludedOrCreateNewGame();
         PlayerRole playerRole = playerRoleService.getPlayerRoleFromGameState(gameState);
 
-        if (playerRole == PlayerRole.PlayerA) {
-            gameState.setPlayerA(new PlayerState());
-        } else {
-            gameState.setPlayerB(new PlayerState());
-        }
-
         String gameToken = gameTokenService.getTokenForGameIdAndPlayerRole(gameState.getGameId(), playerRole);
-        return new InitGameDTO(gameToken, playerRole, gameState);
+        return new InitGameResponse(gameToken, playerRole, gameState);
     }
 
     @GetMapping("step")
-    public StepDTO doStep(@RequestParam("gameToken") String gameToken,
+    public GameState doStep(@RequestParam("gameToken") String gameToken,
                           @RequestParam("pitId") Integer pitId) {
-        return new StepDTO();
+        GameTokenParams gameTokenParams = gameTokenService.getGameParamsFromToken(gameToken);
+        return gameStateService.doGameStep(gameTokenParams.getGameId(), gameTokenParams.getPlayerRole(), pitId);
     }
 }

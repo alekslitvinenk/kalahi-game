@@ -11,7 +11,6 @@ public class GameTokenParams {
 
     public static GameTokenParams fromTokenExtendedInfo(String extendedInfo) {
         String[] components = extendedInfo.split(";");
-
         return new GameTokenParams(Integer.parseInt(components[0]), PlayerRole.valueOf(components[1]));
     }
 }

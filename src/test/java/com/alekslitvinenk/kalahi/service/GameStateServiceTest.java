@@ -22,5 +22,17 @@ public class GameStateServiceTest {
         GameState gameState = service.getNotConcludedOrCreateNewGame();
 
         Assert.assertNotNull(gameState);
+        Assert.assertNotNull(gameState.getPlayerA());
+    }
+
+    @Test
+    public void returnsExistingGame() {
+        GameState gameState1 = service.getNotConcludedOrCreateNewGame();
+        GameState gameState2 = service.getNotConcludedOrCreateNewGame();
+
+        Assert.assertEquals(gameState1, gameState2);
+        Assert.assertNotNull(gameState2);
+        Assert.assertNotNull(gameState2.getPlayerA());
+        Assert.assertNotNull(gameState2.getPlayerB());
     }
 }

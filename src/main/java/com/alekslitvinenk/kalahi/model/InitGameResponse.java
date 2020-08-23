@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class InitGameDTO {
+public class InitGameResponse {
     private final String gameToken;
     private final PlayerRole playerRole;
     private final GameState gameState;

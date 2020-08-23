@@ -1,6 +1,6 @@
 package com.alekslitvinenk.kalahi.service;
 
-import com.alekslitvinenk.kalahi.exception.GameConcludedException;
+import com.alekslitvinenk.kalahi.exception.WrongGameStateException;
 import com.alekslitvinenk.kalahi.model.GameState;
 import com.alekslitvinenk.kalahi.model.PlayerRole;
 import com.alekslitvinenk.kalahi.model.PlayerState;
@@ -12,29 +12,30 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class PlayerRoleServiceTest {
 
-    private PlayerRoleService service = new PlayerRoleService();
-    private int gameId = 1;
+    private final PlayerRoleService service = new PlayerRoleService();
+    private final int gameId = 1;
 
-    @Test
-    public void returnsPlayerAWhenNoPlayersAssignedToGame() {
+    @Test(expected = WrongGameStateException.class)
+    public void throwsWrongGameStateExceptionWhenNoPlayersAssignedToGame() {
         GameState gameState = new GameState(gameId);
         PlayerRole playerRole = service.getPlayerRoleFromGameState(gameState);
         Assert.assertEquals(PlayerRole.PlayerA, playerRole);
     }
 
     @Test
-    public void returnsPlayerBWhenPlayerAAssignedToGame() {
+    public void returnsPlayerAWhenPlayerAAssignedToGame() {
         GameState gameState = new GameState(gameId);
         gameState.setPlayerA(new PlayerState());
         PlayerRole playerRole = service.getPlayerRoleFromGameState(gameState);
-        Assert.assertEquals(PlayerRole.PlayerB, playerRole);
+        Assert.assertEquals(PlayerRole.PlayerA, playerRole);
     }
 
-    @Test(expected = GameConcludedException.class)
-    public void throwsGameConcludedExceptionWhenBothPlayersAssignedToGame() {
+    @Test
+    public void returnsPlayerBAWhenBothPlayersAssignedToGame() {
         GameState gameState = new GameState(gameId);
         gameState.setPlayerA(new PlayerState());
         gameState.setPlayerB(new PlayerState());
-        service.getPlayerRoleFromGameState(gameState);
+        PlayerRole playerRole = service.getPlayerRoleFromGameState(gameState);
+        Assert.assertEquals(PlayerRole.PlayerB, playerRole);
     }
 }
