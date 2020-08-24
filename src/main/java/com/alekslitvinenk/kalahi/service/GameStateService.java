@@ -37,7 +37,7 @@ public class GameStateService {
             int gameId = gameIdSeqGenerator.incrementAndGet();
             GameState gameState = new GameState(gameId);
             gameState.setPlayerA(new PlayerState());
-            activeGames.put(gameId, gameState);
+            activeGames.putIfAbsent(gameId, gameState);
             lastCreatedGameRef.setPlain(gameState);
             return gameState;
         } else {

@@ -4,11 +4,99 @@
     <title>Path Finder</title>
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
-    <style type="text/css"></style>
+    <style type="text/css">
+        .roleGroup {
+            width: 100px;
+        }
+
+        .roleGroup div {
+            width: 40%;
+            display: inline-block;
+        }
+
+        .pit, .store {
+            width: auto;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .pit {
+            width: 50px;
+            height: 50px;
+            background-color: darkgray;
+            border-radius: 25px;
+        }
+
+        .store {
+            background-color: bisque;
+            width: 50px;
+            height: 100px;
+            border-radius: 25px;
+            font-size: large;
+        }
+
+        .deck {
+            height: 50px;
+        }
+
+        .deck.playerA {
+            margin-left: 54px;
+        }
+
+        #store_1 {
+            transform: translate(0, -50px);
+        }
+    </style>
     <script type="text/javascript">
         var gameToken;
-        var playerRole;
         var nextTurn;
+        var playerRole;
+
+        function setRole(playerRole) {
+
+            $("#playerRole").text(playerRole);
+        }
+
+        function setTurn(turn) {
+
+        }
+
+        function setState(gameState) {
+            if (gameState.hasOwnProperty("playerA")) {
+                var playerA = gameState.playerA;
+                var playerPits = playerA.pits;
+
+                for (var i = 0; i < playerPits.length; i++) {
+                    $("#pit_" + (i + 1) + " p").text(playerPits[i]);
+                }
+
+                $("#store_1 p").text(playerA.store);
+            } else {
+                for (var i = 0; i < playerPits.length; i++) {
+                    $("#pit_" + (i + 1) + " p").text(6);
+                }
+
+                $("#store_1 p").text(0);
+            }
+
+            if (gameState.hasOwnProperty("playerB")) {
+                var playerB = gameState.playerB;
+                var playerPits = playerB.pits;
+
+                for (var i = 0; i < playerPits.length; i++) {
+                    $("#pit_" + (7 + i) + " p").text(playerPits[i]);
+                }
+
+                $("#store_2 p").text(playerB.store);
+            } else {
+                for (var i = 0; i < playerPits.length; i++) {
+                    $("#pit_" + (7 + i) + " p").text(6);
+                }
+
+                $("#store_2 p").text(0);
+            }
+        }
+
         $(function () {
             $.ajax({
                 type: 'GET',
@@ -16,8 +104,9 @@
                 url: 'init',
                 success: function (response) {
                     gameToken = response['gameToken'];
-                    playerRole = response['playerRole'];
-                    nextTurn = response['nextTurn'];
+                    setRole(response['playerRole']);
+                    setTurn(response['nextTurn']);
+                    setState(response['gameState']);
                 },
                 error: function (error) {
                     console.log(error);
@@ -27,7 +116,30 @@
     </script>
 </head>
 <body>
-<h1>Kalaha Game</h1>
-
+    <h1>Kalaha Game</h1>
+    <div class="roleGroup">
+        <div><b>Your role: </b></div>
+        <div id="playerRole"></div>
+    </div>
+    <div class="gameGrid">
+        <div class="deck playerB">
+            <div id="store_2" class="store"><p></p></div>
+            <div id="pit_12" class="pit"><p></p></div>
+            <div id="pit_11" class="pit"><p></p></div>
+            <div id="pit_10" class="pit"><p></p></div>
+            <div id="pit_9" class="pit"><p></p></div>
+            <div id="pit_8" class="pit"><p></p></div>
+            <div id="pit_7" class="pit"><p></p></div>
+        </div>
+        <div class="deck playerA">
+            <div id="pit_1" class="pit"><p></p></div>
+            <div id="pit_2" class="pit"><p></p></div>
+            <div id="pit_3" class="pit"><p></p></div>
+            <div id="pit_4" class="pit"><p></p></div>
+            <div id="pit_5" class="pit"><p></p></div>
+            <div id="pit_6" class="pit"><p></p></div>
+            <div id="store_1" class="store"><p></p></div>
+        </div>
+    </div>
 </body>
 </html>
