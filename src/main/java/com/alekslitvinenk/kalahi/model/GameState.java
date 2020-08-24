@@ -31,22 +31,50 @@ public class GameState {
     }
 
     public void moveRocks(PlayerRole playerRole, int pitId) {
+        PlayerState playerState = getPlayerStateByRole(playerRole);
+        PlayerState enemyState = getEnemyStateByRole(playerRole);
+
+        int rocks = playerState.distributeRocksFromPit(pitId);
+        while (rocks > 0) {
+            rocks = enemyState.distributeRocks(rocks, false);
+            if (rocks > 0) {
+                rocks = playerState.distributeRocks(rocks, true);
+            }
+        }
+
+        if (playerState.getPitIdWhereLastPlayerRockLanded() != -1) {
+            seizeRocksInEnemyPitsInFavourOf(playerRole, playerState.getPitIdWhereLastPlayerRockLanded());
+        }
+    }
+
+    private void seizeRocksInEnemyPitsInFavourOf(PlayerRole playerRole, int pitId) {
+        PlayerState playerState = getPlayerStateByRole(playerRole);
+        PlayerState enemyState = getEnemyStateByRole(playerRole);
+
+        int count = playerState.getPits()[pitId];
+        playerState.getPits()[pitId] = 0;
+
+        int enemyPitId = 5 - pitId;
+        count += enemyState.getPits()[enemyPitId];
+        enemyState.getPits()[enemyPitId] = 0;
+
+        int playerStore = playerState.getStore() + count;
+        playerState.setStore(playerStore);
+    }
+
+    private PlayerState getPlayerStateByRole(PlayerRole playerRole) {
         if (playerRole == PlayerRole.PlayerA) {
-            int rocks = playerA.distributeRocksFromPit(pitId);
-            while (rocks > 0) {
-                rocks = playerB.distributeRocks(rocks, false);
-                if (rocks > 0) {
-                    rocks = playerA.distributeRocks(rocks, true);
-                }
-            }
-        } else if (playerRole == PlayerRole.PlayerB) {
-            int rocks = playerB.distributeRocksFromPit(pitId);
-            while (rocks > 0) {
-                rocks = playerA.distributeRocks(rocks, false);
-                if (rocks > 0) {
-                    rocks = playerB.distributeRocks(rocks, true);
-                }
-            }
+            return playerA;
+        } else {
+            return playerB;
+        }
+    }
+
+    private PlayerState getEnemyStateByRole(PlayerRole playerRole) {
+        if (playerRole == PlayerRole.PlayerA) {
+            return playerB;
+        } else {
+            return playerA;
         }
     }
 }
