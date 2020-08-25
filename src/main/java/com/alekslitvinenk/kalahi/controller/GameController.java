@@ -34,4 +34,16 @@ public class GameController {
         GameTokenParams gameTokenParams = gameTokenService.getGameParamsFromToken(gameToken);
         return gameStateService.doGameStep(gameTokenParams.getGameId(), gameTokenParams.getPlayerRole(), pitId);
     }
+
+    @GetMapping("state")
+    public GameState getState(@RequestParam("gameToken") String gameToken) {
+        GameTokenParams gameTokenParams = gameTokenService.getGameParamsFromToken(gameToken);
+        return gameStateService.getStateByGameId(gameTokenParams.getGameId());
+    }
+
+    @GetMapping("finish")
+    public void finishGame(@RequestParam("gameToken") String gameToken) {
+        GameTokenParams gameTokenParams = gameTokenService.getGameParamsFromToken(gameToken);
+        gameStateService.finishGame(gameTokenParams.getGameId());
+    }
 }

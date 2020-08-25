@@ -45,6 +45,10 @@ public class GameState {
         if (playerState.getPitIdWhereLastPlayerRockLanded() != -1) {
             seizeRocksInEnemyPitsInFavourOf(playerRole, playerState.getPitIdWhereLastPlayerRockLanded());
         }
+
+        if (!playerState.isRocksEndedInPlayerStore() && playerState.getPitIdWhereLastPlayerRockLanded() == -1) {
+            setNextTurn(togglePlayer(playerRole));
+        }
     }
 
     private void seizeRocksInEnemyPitsInFavourOf(PlayerRole playerRole, int pitId) {
@@ -75,6 +79,14 @@ public class GameState {
             return playerB;
         } else {
             return playerA;
+        }
+    }
+
+    private PlayerRole togglePlayer(PlayerRole playerRole) {
+        if (playerRole == PlayerRole.PlayerA) {
+            return PlayerRole.PlayerB;
+        } else {
+            return PlayerRole.PlayerA;
         }
     }
 }

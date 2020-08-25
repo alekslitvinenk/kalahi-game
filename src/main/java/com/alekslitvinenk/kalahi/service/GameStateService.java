@@ -48,6 +48,7 @@ public class GameStateService {
     public GameState doGameStep(int gameId, PlayerRole playerRole, int pitId) {
         GameState gameState = activeGames.get(gameId);
         if (gameState != null) {
+            Assert.isTrue(gameState.hasPlayerA() && gameState.hasPlayerB(), "Both players should join the game");
             Assert.isTrue(gameId == gameState.getGameId(), "game's gameId mismatch");
             if (gameState.getNextTurn() != playerRole) {
                 throw new WrongTurnException();
@@ -59,6 +60,15 @@ public class GameStateService {
         }
 
         return gameState;
+    }
+
+    public GameState getStateByGameId(int gameId) {
+        GameState gameState = activeGames.get(gameId);
+        if (gameState != null) {
+            return gameState;
+        } else {
+            throw new GameNotExistsException();
+        }
     }
 
     public void finishGame(int gameId) {

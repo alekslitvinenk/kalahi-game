@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>Path Finder</title>
+    <title>Kalaha Game</title>
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
     <style type="text/css">
@@ -51,14 +51,39 @@
         var gameToken;
         var nextTurn;
         var playerRole;
+        var timerRef;
 
-        function setRole(playerRole) {
-
-            $("#playerRole").text(playerRole);
+        function setRole(role) {
+            playerRole = role
+            $("#playerRole").text(role);
         }
 
         function setTurn(turn) {
+            if (turn !== playerRole) {
+                if (timerRef == null) {
+                    timerRef = setInterval(function () {
+                        $.ajax({
+                            type: 'GET',
+                            dataType: 'json',
+                            url: 'state',
+                            data: {
+                                gameToken: gameToken,
+                            },
+                            success: function (response) {
+                                setState(response);
+                            },
+                            error: function (error) {
+                                console.log(error);
+                            }
+                        });
+                    }, 1000)
+                }
+            } else {
+                clearInterval(timerRef);
+                timerRef = null;
+            }
 
+            $("#playerTurn").text(turn);
         }
 
         function setState(gameState) {
@@ -95,6 +120,33 @@
 
                 $("#store_2 p").text(0);
             }
+
+            setTurn(gameState['nextTurn']);
+        }
+
+        function addPitClickHandler(numId) {
+            $("#pit_" + numId).click(function() {
+                var pitId = $(this).attr("id").split("_")[1] - 1;
+                if (pitId > 6) {
+                    pitId = pitId - 6;
+                }
+
+                $.ajax({
+                    type: 'GET',
+                    dataType:'json',
+                    url: 'step',
+                    data: {
+                        gameToken: gameToken,
+                        pitId: pitId
+                    },
+                    success: function (response) {
+                        setState(response);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            })
         }
 
         $(function () {
@@ -105,8 +157,21 @@
                 success: function (response) {
                     gameToken = response['gameToken'];
                     setRole(response['playerRole']);
-                    setTurn(response['nextTurn']);
                     setState(response['gameState']);
+
+                    var startIdx;
+                    var endIdx;
+                    if (playerRole === "PlayerA") {
+                        startIdx = 1;
+                        endIdx = 6;
+                    } else {
+                        startIdx = 7;
+                        endIdx = 12;
+                    }
+
+                    for (var i = startIdx; i <= endIdx; i++) {
+                        addPitClickHandler(i);
+                    }
                 },
                 error: function (error) {
                     console.log(error);
@@ -120,6 +185,10 @@
     <div class="roleGroup">
         <div><b>Your role: </b></div>
         <div id="playerRole"></div>
+    </div>
+    <div class="roleGroup">
+        <div><b>Whose turn: </b></div>
+        <div id="playerTurn"></div>
     </div>
     <div class="gameGrid">
         <div class="deck playerB">
