@@ -25,6 +25,7 @@
             height: 50px;
             background-color: darkgray;
             border-radius: 25px;
+            cursor: pointer;
         }
 
         .store {
@@ -58,6 +59,30 @@
             $("#playerRole").text(role);
         }
 
+        function setWinner(winner) {
+            if (winner) {
+                window.alert("Player " + winner + " won!");
+
+                clearInterval(timerRef);
+                timerRef = null;
+
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    url: 'finish',
+                    data: {
+                        gameToken: gameToken,
+                    },
+                    success: function (response) {
+                        setState(response);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+        }
+
         function setTurn(turn) {
             if (turn !== playerRole) {
                 if (timerRef == null) {
@@ -81,9 +106,17 @@
             } else {
                 clearInterval(timerRef);
                 timerRef = null;
+
+                if (nextTurn) {
+                    if (turn !== nextTurn)
+                        window.alert("Your turn!");
+                } else {
+                    window.alert("Waiting for opponent!");
+                }
             }
 
             $("#playerTurn").text(turn);
+            nextTurn = turn;
         }
 
         function setState(gameState) {
@@ -122,12 +155,13 @@
             }
 
             setTurn(gameState['nextTurn']);
+            setWinner(gameState['winner']);
         }
 
         function addPitClickHandler(numId) {
             $("#pit_" + numId).click(function() {
                 var pitId = $(this).attr("id").split("_")[1] - 1;
-                if (pitId > 6) {
+                if (pitId > 5) {
                     pitId = pitId - 6;
                 }
 
@@ -181,33 +215,35 @@
     </script>
 </head>
 <body>
-    <h1>Kalaha Game</h1>
-    <div class="roleGroup">
-        <div><b>Your role: </b></div>
-        <div id="playerRole"></div>
-    </div>
-    <div class="roleGroup">
-        <div><b>Whose turn: </b></div>
-        <div id="playerTurn"></div>
-    </div>
-    <div class="gameGrid">
-        <div class="deck playerB">
-            <div id="store_2" class="store"><p></p></div>
-            <div id="pit_12" class="pit"><p></p></div>
-            <div id="pit_11" class="pit"><p></p></div>
-            <div id="pit_10" class="pit"><p></p></div>
-            <div id="pit_9" class="pit"><p></p></div>
-            <div id="pit_8" class="pit"><p></p></div>
-            <div id="pit_7" class="pit"><p></p></div>
+    <div class="game">
+        <h1>Kalaha Game</h1>
+        <div class="roleGroup">
+            <div><b>Your role: </b></div>
+            <div id="playerRole"></div>
         </div>
-        <div class="deck playerA">
-            <div id="pit_1" class="pit"><p></p></div>
-            <div id="pit_2" class="pit"><p></p></div>
-            <div id="pit_3" class="pit"><p></p></div>
-            <div id="pit_4" class="pit"><p></p></div>
-            <div id="pit_5" class="pit"><p></p></div>
-            <div id="pit_6" class="pit"><p></p></div>
-            <div id="store_1" class="store"><p></p></div>
+        <div class="roleGroup">
+            <div><b>Whose turn: </b></div>
+            <div id="playerTurn"></div>
+        </div>
+        <div class="gameGrid">
+            <div class="deck playerB">
+                <div id="store_2" class="store"><p></p></div>
+                <div id="pit_12" class="pit"><p></p></div>
+                <div id="pit_11" class="pit"><p></p></div>
+                <div id="pit_10" class="pit"><p></p></div>
+                <div id="pit_9" class="pit"><p></p></div>
+                <div id="pit_8" class="pit"><p></p></div>
+                <div id="pit_7" class="pit"><p></p></div>
+            </div>
+            <div class="deck playerA">
+                <div id="pit_1" class="pit"><p></p></div>
+                <div id="pit_2" class="pit"><p></p></div>
+                <div id="pit_3" class="pit"><p></p></div>
+                <div id="pit_4" class="pit"><p></p></div>
+                <div id="pit_5" class="pit"><p></p></div>
+                <div id="pit_6" class="pit"><p></p></div>
+                <div id="store_1" class="store"><p></p></div>
+            </div>
         </div>
     </div>
 </body>

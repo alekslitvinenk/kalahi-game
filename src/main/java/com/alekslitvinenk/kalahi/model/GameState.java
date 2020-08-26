@@ -2,6 +2,7 @@ package com.alekslitvinenk.kalahi.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.Assert;
 
 /**
  * Represents game per se as it's fully denoted by its state
@@ -13,6 +14,7 @@ public class GameState {
     private PlayerState playerA;
     private PlayerState playerB;
     private PlayerRole nextTurn = PlayerRole.PlayerA;
+    private PlayerRole winner;
 
     public GameState(int gameId) {
         this.gameId = gameId;
@@ -34,6 +36,8 @@ public class GameState {
         PlayerState playerState = getPlayerStateByRole(playerRole);
         PlayerState enemyState = getEnemyStateByRole(playerRole);
 
+        Assert.isTrue(playerState.getPits()[pitId] > 0, "Cannot move from empty pit");
+
         int rocks = playerState.distributeRocksFromPit(pitId);
         while (rocks > 0) {
             rocks = enemyState.distributeRocks(rocks, false);
@@ -48,6 +52,10 @@ public class GameState {
 
         if (!playerState.isRocksEndedInPlayerStore() && playerState.getPitIdWhereLastPlayerRockLanded() == -1) {
             setNextTurn(togglePlayer(playerRole));
+        }
+
+        if (playerState.getPitSum() == 0) {
+            winner = playerA.getStore() > playerB.getStore() ? PlayerRole.PlayerA : PlayerRole.PlayerB;
         }
     }
 

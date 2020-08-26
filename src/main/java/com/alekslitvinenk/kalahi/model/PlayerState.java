@@ -23,6 +23,16 @@ public class PlayerState {
         Arrays.fill(pits, ROCKS_IN_PIT);
     }
 
+    public int getPitSum() {
+        int res = 0;
+
+        for (int pit : pits) {
+            res += pit;
+        }
+
+        return res;
+    }
+
     public int distributeRocksFromPit(int pitId) {
         rocksEndedInPlayerStore = false;
         pitIdWhereLastPlayerRockLanded = -1;
